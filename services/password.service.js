@@ -33,7 +33,7 @@ var mailSent = async (req, res, next) => {
             console.log(info);
         }
 
-        res.send({ "Info": "Password Changed,Check Your registered Email" });
+        res.send({ "Info": "Password generated,Check Your registered Email" });
     });
 }
 module.exports = {

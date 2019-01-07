@@ -65,7 +65,7 @@ var addUser = async (req, res, next) => {
                 var mailOptions = {
 
                     to: payLoad.email,
-                    subject: 'Password Changed',
+                    subject: ' Password generated',
                     from: '"THD Project" <thd.project2.0@gmail.com>',
                     html: '<h1>Your New Password is :</h1>' + '<b>' + password + '</b>'
                 };

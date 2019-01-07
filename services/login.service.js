@@ -19,16 +19,17 @@ var userLogin = async (req, res, next) => {
                 }
             }
             );
+        if(data[0].isDeleted != 1){
 
-        if(data[0].status === 'Active'){
+            if(data[0].status === 'Active'){
             
-            if (data[0].password === req.query.password && data[0].loginAttempts < 5) {
-                console.log("hi")
-                res.status(HTTP_CODES.OK).send({
+                if (data[0].password === req.query.password && data[0].loginAttempts < 5) {
+               
+                    res.status(HTTP_CODES.OK).send({
                     "statusCode": HTTP_CODES.OK,
                     "info": "logged in successfully"
-                })
-            }
+                    })
+                }
             else if (data[0].loginAttempts == 5) {
                 console.log("hello")
                 var updateStatus =  userLoginModel.Login.update({ 
@@ -53,7 +54,7 @@ var userLogin = async (req, res, next) => {
                 })
             }
             else{
-                console.log("hii")
+                //console.log("hii")
                 var updateLoginAttempts = userLoginModel.Login.update(
                     { "loginAttempts" : data[0].loginAttempts+1,},
                     { where :{ email : req.query.email}}
@@ -79,8 +80,7 @@ var userLogin = async (req, res, next) => {
                         where: {
                             email: req.query.email
                         }
-                    }
-                    );
+                    });
                    
                     // var endDate = new Date();
                      //console.log(startDate < endDate)
@@ -90,7 +90,8 @@ var userLogin = async (req, res, next) => {
                     if( startDate < DateDiff){
                         var update = await userLoginModel.Login.update(
                         {
-                            "status" : 'Active'
+                            "status" : 'Active',
+                            "modifiedOn" :new Date(),
                         },
                         {
                             where : {
@@ -126,8 +127,14 @@ var userLogin = async (req, res, next) => {
                 }
             }
         }
-
     }
+    else{
+        res.status(HTTP_CODES.OK).send({
+            "statusCode": HTTP_CODES.OK,
+            "info": "user dosen't exists"
+            })
+    }
+}
     catch (e) {
 
         next(e)
