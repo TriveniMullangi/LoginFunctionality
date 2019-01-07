@@ -103,6 +103,7 @@ var forgotPassword =async (req, res, next) => {
                                       
                                     }               
                             })
+                            //sending email
                             .then(() => {
             
                                 var transporter = nodeMailer.createTransport({
