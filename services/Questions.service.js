@@ -2,7 +2,7 @@ var logger = require('../util/logger');
 var HTTP_CODES = require('../util/statusCodes');
 var questionsModel = require('../model/questions.model');
 
-//storing questions in database
+//storing questions in databse
 var addQuestions =  async (req,res,next)=>{
    console .log("URL hit to :", req.hostname, req.originalUrl);
     logger.info("Entered into questions adding service");
@@ -54,11 +54,12 @@ var getAll = async (req,res,next)=>{
         
         let data = await questionsModel.Questions.findAll({
             where :{
-                "technology" : technology
+                "technologyCode" : technology
             }
         });
-        data[0].questions = JSON.parse(data[0].questions);
-        //res.send(data)
+        if(data.length!=0){
+            data[0].questions = JSON.parse(data[0].questions);
+        
         for(var qno=0 ; qno<questionNumbers.length ; qno++){
             
             let question ={};
@@ -77,6 +78,13 @@ var getAll = async (req,res,next)=>{
         }
         res.send(questions);
     }
+    else{
+        res.status(HTTP_CODES.BAD_REQUEST).send({
+            "statusCode": HTTP_CODES.BAD_REQUEST,
+            "info": "select valid course"
+            })
+    }
+}
     catch(err){
         next(err);
     }
