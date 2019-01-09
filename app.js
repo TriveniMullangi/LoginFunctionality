@@ -39,7 +39,7 @@ app.use((err,req,res,next)=>{
     var error={
       "statusCode":400,
       "info":"check request body",
-      "error":err
+      "error":err.error
     };
     res.status(400).send(error);
   }
@@ -63,6 +63,16 @@ app.use((err,req,res,next)=>{
         "error": err
       };
       res.status(500).send(errorMessage);
+    }
+    else if(err.name == "SequelizeUniqueConstraintError"){
+      console.log("hi")
+      console.log("user already available")
+      var errorMessage = {
+        "status": 400,
+        "info": "primary key constraint",
+        "error":err.parent.sqlMessage
+      };
+      res.status(400).send(errorMessage);
     }
     //404 Error
     else if (err.statusCode == 404) {

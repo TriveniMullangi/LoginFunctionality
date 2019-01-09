@@ -46,8 +46,19 @@ var addUser = async (req, res, next) => {
                 createdOn: new Date(),
                 createdBy: payLoad.email,
                 modifiedOn: new Date(),
-                modifiedBy: req.body.email
-            }).then(user => {
+                modifiedBy: req.body.userName
+            })
+            //res.send(userData)
+            if(userData === undefined)
+            {
+                console.log("hi")
+                res.status(HTTP_CODES.OK).send({
+                    "statusCode": HTTP_CODES.OK,
+                    "info": "check your request body",
+                    "err" : userData
+                })
+            }
+            else{
                 var transporter = nodeMailer.createTransport({
                     host: 'smtp.gmail.com',
                     port: 465,
@@ -70,26 +81,29 @@ var addUser = async (req, res, next) => {
                     html: '<h1>Your New Password is :</h1>' + '<b>' + password + '</b>'
                 };
 
-                transporter.sendMail(mailOptions, (error, info) => {
+                transporter.sendMail(mailOptions,(error, info) => {
                     if (error) {
                         logger.error(error);
+                        res.send(error)
                     }
                     else {
                         console.log(info);
                     }
-
-                    res.send({ "Info": "Password Changed,Check Your registered Email" });
-                });
-            }).catch(err => {
-                console.log(err)
-            })
-
+                })
+            } 
             res.status(HTTP_CODES.OK).send({
-                "statusCode": HTTP_CODES.OK,
-                "info": "user Data saved in database",
-                "User": userData
+                "statusCode": HTTP_CODES.Ok,
+                "info": "user registerd successfully",
+                "userData" : userData
             })
         }
+        else{
+            res.status(HTTP_CODES.BAD_REQUEST).send({
+                "statusCode": HTTP_CODES.BAD_REQUEST,
+                "info": "check your request body",
+            })
+        }
+        
     }
     catch (e) {
         next(e);

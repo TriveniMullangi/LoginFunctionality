@@ -15,20 +15,41 @@ var userLogin = async (req, res, next) => {
         var data = await userLoginModel.Login.findAll(
             {
                 where: {
-                    email: req.query.email
+                    email: req.params.email
                 }
             }
             );
+            //res.send(data);
+            //console.log(userLoginModel.email)
+    if(data.length!=0){
         if(data[0].isDeleted != 1){
 
             if(data[0].status === 'Active'){
             
-                if (data[0].password === req.query.password && data[0].loginAttempts < 5) {
-               
-                    res.status(HTTP_CODES.OK).send({
-                    "statusCode": HTTP_CODES.OK,
-                    "info": "logged in successfully"
-                    })
+                if (data[0].password === req.params.password && data[0].loginAttempts < 5) {
+                    var loginAttemptsUpdate = await userLoginModel.Login.update({ 
+                        
+                        "loginAttempts" : 0,
+                        "modifiedOn" :new Date(),
+                        "modifiedBy" : data[0].userName
+                        }, 
+                        {
+                             where:{ 
+                                  email : req.params.email
+                                    }
+                                })
+                    
+                    var afterData = await userLoginModel.Login.findAll(
+                        {
+                            where: {
+                                        email: req.params.email
+                                    }
+                        });
+                        res.status(HTTP_CODES.OK).send({
+                            "statusCode": HTTP_CODES.OK,
+                            "info": "logged in successfully",
+                            "data" : afterData
+                        })
                 }
             else if (data[0].loginAttempts == 5) {
                 console.log("hello")
@@ -40,13 +61,13 @@ var userLogin = async (req, res, next) => {
                     }, 
                     {
                          where:{ 
-                              email : req.query.email
+                              email : req.params.email
                                 }
                 }).then(()=>{
-                    res.status(HTTP_CODES.OK).send({
-                        "statusCode": HTTP_CODES.OK,
+                    res.status(HTTP_CODES.BAD_REQUEST).send({
+                        "statusCode": HTTP_CODES.BAD_REQUEST,
                         "info": "your account is blocked please try agin after a while",
-                        "updateStatus" : updateStatus
+                        "updateStatus" : data
                     })
                 })
                 .catch(err=>{
@@ -57,19 +78,14 @@ var userLogin = async (req, res, next) => {
                 //console.log("hii")
                 var updateLoginAttempts = userLoginModel.Login.update(
                     { "loginAttempts" : data[0].loginAttempts+1,},
-                    { where :{ email : req.query.email}}
+                    { where :{ email : req.params.email}}
                 )
 
-                .then(()=>{
-                    res.status(HTTP_CODES.OK).send({
-                        "statusCode": HTTP_CODES.OK,
+                    res.status(HTTP_CODES.BAD_REQUEST).send({
+                        "statusCode": HTTP_CODES.BAD_REQUEST,
                         "info": "invalid credentials",
-                        "updateLoginAttempts" : updateLoginAttempts
+                        //"updateLoginAttempts" : updateLoginAttempts
                     })
-                }).catch(err=>{
-                    next(err)
-                })
-              
             }
         }
         else{
@@ -78,17 +94,17 @@ var userLogin = async (req, res, next) => {
                 var data = await userLoginModel.Login.findAll(
                     {
                         where: {
-                            email: req.query.email
+                            email: req.params.email
                         }
                     });
                    
                     // var endDate = new Date();
                      //console.log(startDate < endDate)
-                if (data[0].password === req.query.password){
+                if (data[0].password === req.params.password){
                     var startDate = data[0].modifiedOn;
                     var DateDiff =moment().subtract(1, 'hours').toDate();
                     if( startDate < DateDiff){
-                        var update = await userLoginModel.Login.update(
+                        var updateLog = await userLoginModel.Login.update(
                         {
                             "status" : 'Active',
                             "modifiedOn" :new Date(),
@@ -96,32 +112,34 @@ var userLogin = async (req, res, next) => {
                         {
                             where : {
                                
-                                    email: req.query.email,
+                                    email: req.params.email,
                                     modifiedOn : {
                                         [Op.lte]: DateDiff
                                         }      
                                     }               
                         })
-                        .then(()=>{
+                        var afterData = await userLoginModel.Login.findAll(
+                            {
+                                where: {
+                                            email: req.params.email
+                                        }
+                            });
                             res.status(HTTP_CODES.OK).send({
                             "statusCode": HTTP_CODES.OK,
-                            "info": "logged in successfully"
+                            "info": "logged in successfully",
+                            "data":afterData
                             })
-                        })
-                        .catch(err=>{
-                             next(err);
-                         })
                     }  
                     else{
-                        res.status(HTTP_CODES.OK).send({
-                        "statusCode": HTTP_CODES.OK,
+                        res.status(HTTP_CODES.BAD_REQUEST).send({
+                        "statusCode": HTTP_CODES.BAD_REQUEST,
                         "info": "sorry, your account is still in blocked state.please try again later."
                         })
                     }
                 }
                 else{
-                        res.status(HTTP_CODES.OK).send({
-                        "statusCode": HTTP_CODES.OK,
+                        res.status(HTTP_CODES.BAD_REQUEST).send({
+                        "statusCode": HTTP_CODES.BAD_REQUEST,
                         "info": "invalid password"
                         })
                 }
@@ -129,11 +147,19 @@ var userLogin = async (req, res, next) => {
         }
     }
     else{
-        res.status(HTTP_CODES.OK).send({
+        res.status(HTTP_CODES.BAD_REQUEST).send({
             "statusCode": HTTP_CODES.OK,
             "info": "user dosen't exists"
             })
     }
+}
+else{
+    res.status(HTTP_CODES.BAD_REQUEST).send({
+        "statusCode": HTTP_CODES.BAD_REQUEST,
+        "info": "enter valid email",
+               
+    })
+}
 }
     catch (e) {
 

@@ -12,6 +12,7 @@ var forgotPassword =async (req, res, next) => {
     logger.info("Entered into forgot password service");
 
     try {
+
         let password = generator(10);
         let payLoad = req.body;
         var data = await userLoginModel.Login.findAll(
@@ -20,10 +21,11 @@ var forgotPassword =async (req, res, next) => {
                     email: payLoad.email
                 }
             });
-        // verify status and update password
-        if(data[0].status === 'Active'){
-               //console.log("hi")
-            var updatePassword = await userLoginModel.Login.update(
+        if(data.length!=0){
+            if(data[0].isDeleted !=1){
+                if(data[0].status === 'Active'){
+              
+                    var updatePassword = await userLoginModel.Login.update(
                 {
                     "password" : password,
                     "modifiedOn" :new Date(),
@@ -35,7 +37,6 @@ var forgotPassword =async (req, res, next) => {
                           
                         }               
                 })
-                .then(() => {
                     var transporter = nodeMailer.createTransport({
                         host: 'smtp.gmail.com',
                         port: 465,
@@ -66,21 +67,18 @@ var forgotPassword =async (req, res, next) => {
                                 console.log(info);
                         }
                     });
-                        
-
-                })
-                .then(()=>{
-
+                    var afterData = await userLoginModel.Login.findAll(
+                        {
+                            where: {
+                                        email: req.body.email
+                                    }
+                        });   
+                        //console.log(afterData)
                     res.status(HTTP_CODES.OK).send({
                         "statusCode": HTTP_CODES.OK,
                         "info": "Password Changed,Check Your registered Email",
-                               
+                        "data":    afterData
                     })
-                })
-                .catch(err => {
-                    next(err)
-                })
-                       
             }   
             else{
                 
@@ -104,8 +102,6 @@ var forgotPassword =async (req, res, next) => {
                                     }               
                             })
                             //sending email
-                            .then(() => {
-            
                                 var transporter = nodeMailer.createTransport({
                                     host: 'smtp.gmail.com',
                                     port: 465,
@@ -136,30 +132,44 @@ var forgotPassword =async (req, res, next) => {
                                             console.log(info);
                                     }
                                 });
-                                    
-            
-                            })
-                            .then(()=>{
-            
+                                var afterData = await userLoginModel.Login.findAll(
+                                    {
+                                        where: {
+                                                    email: req.body.email
+                                                }
+                                    });  
                                 res.status(HTTP_CODES.OK).send({
                                     "statusCode": HTTP_CODES.OK,
                                     "info": "Password Changed,Check Your registered Email",
-                                           
+                                    "data":   afterData 
                                 })
-                            })
-                            .catch(err => {
-                                next(err)
-                            })
                     }
                     else{
-                        res.status(HTTP_CODES.OK).send({
-                            "statusCode": HTTP_CODES.OK,
+                        res.status(HTTP_CODES.BAD_REQUEST).send({
+                            "statusCode": HTTP_CODES.BAD_REQUEST,
                             "info": "you are in blocked state, you can't perform any opration",
                                    
-                        })
+                            })
+                        }
                     }
                 }
             }
+            else{
+                res.status(HTTP_CODES.BAD_REQUEST).send({
+                    "statusCode": HTTP_CODES.BAD_REQUEST,
+                    "info": "User doesn't exist",
+                           
+                })
+            }
+        }
+        else{
+            console.log("hello")
+            res.status(HTTP_CODES.BAD_REQUEST).send({
+                "statusCode": HTTP_CODES.BAD_REQUEST,
+                "info": "enter valid email",
+                       
+            })
+        }
     }
     catch (e) {
         next(e);

@@ -21,7 +21,9 @@ var changePassword =async (req, res, next) => {
                 }
             });
         // verify status and update password
-        if(data[0].status === 'Active'){
+        if(data.length!=0){
+            if(data[0].isDeleted !=1){
+                if(data[0].status === 'Active'){
                //console.log("hi")
             var updatePassword = await userLoginModel.Login.update(
                 {
@@ -35,7 +37,6 @@ var changePassword =async (req, res, next) => {
                           
                         }               
                 })
-                .then(() => {
                     var transporter = nodeMailer.createTransport({
                         host: 'smtp.gmail.com',
                         port: 465,
@@ -66,21 +67,17 @@ var changePassword =async (req, res, next) => {
                                 console.log(info);
                         }
                     });
-                        
-
-                })
-                .then(()=>{
-
+                    var afterData = await userLoginModel.Login.findAll(
+                        {
+                            where: {
+                                        email: req.query.email
+                                    }
+                        });  
                     res.status(HTTP_CODES.OK).send({
                         "statusCode": HTTP_CODES.OK,
                         "info": "Password Changed,Check Your registered Email",
-                               
-                    })
-                })
-                .catch(err => {
-                    next(err)
-                })
-                       
+                        "data":   afterData
+                    })         
             }   
             else{
                 
@@ -103,8 +100,6 @@ var changePassword =async (req, res, next) => {
                                       
                                     }               
                             })
-                            .then(() => {
-            
                                 var transporter = nodeMailer.createTransport({
                                     host: 'smtp.gmail.com',
                                     port: 465,
@@ -135,20 +130,17 @@ var changePassword =async (req, res, next) => {
                                             console.log(info);
                                     }
                                 });
-                                    
-            
-                            })
-                            .then(()=>{
-            
+                                var afterData = await userLoginModel.Login.findAll(
+                                    {
+                                        where: {
+                                                    email: req.query.email
+                                                }
+                                    });  
                                 res.status(HTTP_CODES.OK).send({
                                     "statusCode": HTTP_CODES.OK,
                                     "info": "Password Changed,Check Your registered Email",
-                                           
-                                })
-                            })
-                            .catch(err => {
-                                next(err)
-                            })
+                                    "data": afterData
+                                })    
                     }
                     else{
                         res.status(HTTP_CODES.OK).send({
@@ -159,6 +151,23 @@ var changePassword =async (req, res, next) => {
                     }
                 }
             }
+        }
+        else{
+            res.status(HTTP_CODES.BAD_REQUEST).send({
+                "statusCode": HTTP_CODES.BAD_REQUEST,
+                "info": "User doesn't exist",
+                       
+            })
+        }
+    }
+    else{
+       // console.log("hello")
+        res.status(HTTP_CODES.BAD_REQUEST).send({
+            "statusCode": HTTP_CODES.BAD_REQUEST,
+            "info": "enter valid email",
+                   
+        })
+    }
     }
     catch (e) {
         next(e);

@@ -15,6 +15,7 @@ var deleteUser =async (req, res, next) => {
                 }
             })
             //res.send(user);
+        if(user.length!=0){
             if(user[0].isDeleted == 1){
                 res.status(HTTP_CODES.OK).send({
                     "statusCode": HTTP_CODES.OK,
@@ -22,7 +23,7 @@ var deleteUser =async (req, res, next) => {
                 })
             }
             else{
-                var data = await userLoginModel.Login.update(
+                var update= await userLoginModel.Login.update(
                     {
                         "isDeleted" : 1
                     },
@@ -31,18 +32,26 @@ var deleteUser =async (req, res, next) => {
                             email: req.query.email
                         }
                     })
-                    .then(()=>{
+                    var afterDelete = await userLoginModel.Login.findAll(
+                        {
+                            where: {
+                                        email: req.query.email
+                                    }
+                        }); 
                         res.status(HTTP_CODES.OK).send({
                             "statusCode": HTTP_CODES.OK,
                             "info": "user deleted successfully",
+                            "data":afterDelete
                         })
-                    })
-                    .catch(err=>{
-                       // res.send("eneter valid email");
-                        next(err)
-                    })
             }
-            
+        }
+        else{
+            res.status(HTTP_CODES.BAD_REQUEST).send({
+                "statusCode": HTTP_CODES.BAD_REQUEST,
+                "info": "enter valid email",
+                       
+            })
+        }
                     
      }
     catch(err){
