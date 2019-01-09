@@ -2,7 +2,7 @@
 const sequelize = require('sequelize');
 var mariaConnection = require('../connection/login.connection');
 
-//Model Schemaa for Employee Table
+//Model Schemaa for certification Table
 let Questions = mariaConnection.define('certification', {
     technology : sequelize.STRING,
     technologyCode : { 

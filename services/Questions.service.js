@@ -2,6 +2,7 @@ var logger = require('../util/logger');
 var HTTP_CODES = require('../util/statusCodes');
 var questionsModel = require('../model/questions.model');
 
+//storing questions in database
 var addQuestions =  async (req,res,next)=>{
    console .log("URL hit to :", req.hostname, req.originalUrl);
     logger.info("Entered into questions adding service");
