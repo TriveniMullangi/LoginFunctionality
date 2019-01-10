@@ -2,6 +2,9 @@
 var express = require('express');
 var app = express();
 const cors = require("cors");
+const path = require('path')
+const swaggerUi = require('swagger-ui-express');
+YAML = require('yamljs');
 
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -21,6 +24,16 @@ res.header("Access-Control-Allow-Origin", "*");
 res.header("Access-Control-Allow-Headers", "*");
 next();
 });
+
+
+swaggerDocument = YAML.load(path.join(__dirname + '/swagger.yaml'));
+var options = {
+swaggerOptions: {
+docExpansion: 'none'
+}
+};
+app.use('/swagger', swaggerUi.serve);
+app.get('/swagger', swaggerUi.setup(swaggerDocument, options));
 
 app.use('/users', usersRouter);
 

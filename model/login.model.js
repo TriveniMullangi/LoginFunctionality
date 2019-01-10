@@ -3,7 +3,7 @@ const sequelize = require('sequelize');
 var mariaConnection = require('../connection/login.connection');
 
 //Model Schemaa for Employee Table
-let Login = mariaConnection.define('userlogin', {
+let Login = mariaConnection.define('users', {
     email: { 
         type: sequelize.STRING, 
          primaryKey: true 
@@ -25,7 +25,7 @@ let Login = mariaConnection.define('userlogin', {
 }, {
         timestamps: false,
         freezeTableName: true, // Model tableName will be the same as the model name
-        tableName: 'userlogin'
+        tableName: 'users'
     });
 
 module.exports = {

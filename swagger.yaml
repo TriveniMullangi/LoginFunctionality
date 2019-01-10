@@ -1,0 +1,763 @@
+swagger: "2.0"
+info:
+  description: ""
+  version: "1.0.0"
+  title: "Login Functionality documentation"
+host: "localhost:3000"
+basePath: "/users"
+tags:
+- name: "userLogin"
+  description: "Add, delete user, forgot password, change password and login validation"
+- name: "certification"
+  description: "Add course, get particular course question and answers randomly "
+- name: "transactions"
+  description: "Operations about user"
+schemes:
+- "https"
+- "http"
+paths:
+  /tokenGen:
+    get:
+      tags:
+      - "userLogin"
+      summary: "generate a json web token"
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      responses:
+        200:
+          description: "token generated  successfully"
+          schema: 
+            $ref: "#/definitions/tokenGen_response"
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+      
+  /addUser:
+    post:
+      tags:
+      - "userLogin"
+      summary: "Add a new user to our users database"
+      
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "new user added to the database"
+        required: true
+        schema:
+          $ref: "#/definitions/addUser_req"
+      responses:
+        200:
+          description: "user added successfully"
+          schema: 
+            $ref: "#/definitions/addUser_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /userLogin:
+    post:
+      tags:
+      - "userLogin"
+      summary: "validate user login credentials"
+      description: ""
+      
+      consumes:
+      - "application/json"
+      
+      produces:
+      
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "user has to give valid email and password to login to the application"
+        required: true
+        schema:
+          $ref: "#/definitions/userLogin_req"
+      responses:
+        200:
+          description: "user logged in successfully"
+          schema: 
+            $ref: "#/definitions/userLogin_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /changePassword:
+    post:
+      tags:
+      - "userLogin"
+      summary: "change password for particular user based on email"
+      
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "query"
+        description: "changing password based on email"
+        required: true
+        type: "string"
+      
+      responses:
+        200:
+          description: "password changed successfully"
+          schema:
+            $ref: "#/definitions/changePassword_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+  /forgotPassword:
+    post:
+      tags:
+      - "userLogin"
+      summary: "generate new password when user forgot the password based on email"
+      
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "query"
+        description: "generating password based on email"
+        required: true
+        type: "string"
+      
+      responses:
+        200:
+          description: "password generated successfully"
+          schema:
+            $ref: "#/definitions/forgotPassword_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+  /deleteUser:
+    post:
+      tags:
+      - "userLogin"
+      summary: "delete user"
+      
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "email"
+        in: "query"
+        description: "deleting user based on email"
+        required: true
+        type: "string"
+      
+      responses:
+        200:
+          description: "user deleted successfully"
+          schema:
+            $ref: "#/definitions/deleteUser_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+  /addQuestions:
+    post:
+      tags:
+      - "certification"
+      summary: "add questions to a particular technology"
+      
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "adding questions for a technology based on technology code"
+        required: true
+        schema:
+          $ref: "#/definitions/addQuestions_req"
+      
+      responses:
+        200:
+          description: "questions for a technology added successfully"
+          schema:
+            $ref: "#/definitions/addQuestions_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error" 
+  /getQuestions:
+    get:
+      tags:
+      - "certification"
+      summary: "get questions of a particular technology "
+      
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "technologyCode"
+        in: "query"
+        description: "getting questions of a technology based on technology code"
+        required: true
+        type: "string"
+      
+      responses:
+        200:
+          description: "successfully get the questions of a technology"
+          schema:
+            $ref: "#/definitions/getQuestions_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"
+  /addTransaction:
+    post:
+      tags:
+      - "transactions"
+      summary: "validate responses of user for a particular technology and store response in transactions table"
+      
+      consumes:
+      - "application/json"
+     
+      produces:
+      
+      - "application/json"
+      parameters:
+      - name: "body"
+        in: "body"
+        description: "storing user result in database"
+        required: true
+        schema:
+          $ref: "#/definitions/addTransaction_req"
+      
+      responses:
+        200:
+          description: "questions for a technology added successfully"
+          schema:
+            $ref: "#/definitions/addQuestions_response"
+        400:
+          description: "Bad Request"    
+        404:
+          description: "Not Found"
+        500:
+          description: "Internal server error"
+
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  tokenGen_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "token generated Succesfully"
+      token:
+        type: "string"
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJzIiwiaWF0IjoxNTQ3MTQ4NDYzLCJleHAiOjE1NDcxNDg3NjN9.FF2fejF6vfxkhel75rcB_PIGbQASNBOep7Yretdoa1k"
+  addUser_req:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni Mullangi"
+      city:
+        type: "string"
+        example: "Vijayawada"
+      state:
+        type: "string"
+        example: "AP"
+      country:
+        type: "string"
+        example: "INDIA"
+        
+      phoneNo:
+        type: "integer"
+        format: "int64"
+        example: 9640112233
+      qualification:
+        type: "string"
+        example: "B.Tech"
+    
+  addUser_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "user registered Succesfully"
+      userData:
+        $ref: "#/definitions/addUser_response_200"
+  addUser_response_200:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni"
+      password:
+        type: "string"
+        example: "Glyt0VDoXp"
+      city:
+        type: "string"
+        example: "Vijayawada"
+      state:
+        type: "string"
+        example: "AP"
+      County:
+        type: "string"
+        example: "India"
+      phoneNo:
+        type: "integer"
+        format: "int64"
+        example: 9640112233
+      qualification:
+        type: "string"
+        example: "B.Tech"
+      createdOn:
+        type: "string"
+        format: "date-time"
+      createdBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      modifiedOn:
+        type: "string"
+        format: "date-time"
+      modifiedBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      isDeleted:
+        type: "integer"
+        format: "int64"
+        example: 0
+  userLogin_req:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      password:
+        type: "string"
+        example: "Glyt0VDoXp"
+    xml:
+      name: "User"
+  userLogin_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "user logged in Succesfully"
+      data:
+        $ref: "#/definitions/userLogin_response_200"
+  userLogin_response_200:
+    type: "array"
+    items: 
+      $ref: "#/definitions/userLoginArray_response_200"
+  userLoginArray_response_200:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni"
+      password:
+        type: "string"
+        example: "Glyt0VDoXp"
+      city:
+        type: "string"
+        example: "Vijayawada"
+      state:
+        type: "string"
+        example: "AP"
+      County:
+        type: "string"
+        example: "India"
+      phoneNo:
+        type: "integer"
+        format: "int64"
+        example: 9640112233
+      qualification:
+        type: "string"
+        example: "B.Tech"
+      createdOn:
+        type: "string"
+        format: "date-time"
+      createdBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      modifiedOn:
+        type: "string"
+        format: "date-time"
+      modifiedBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      isDeleted:
+        type: "integer"
+        format: "int64"
+        example: 0
+  changePassword_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "password changed Succesfully"
+      data:
+        $ref: "#/definitions/changePassword_response_200"
+  changePassword_response_200:
+    type: "array"
+    items: 
+      $ref: "#/definitions/changePasswordArray_response_200" 
+  changePasswordArray_response_200:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni"
+      password:
+        type: "string"
+        example: "Glyt0VDoXp"
+      city:
+        type: "string"
+        example: "Vijayawada"
+      state:
+        type: "string"
+        example: "AP"
+      County:
+        type: "string"
+        example: "India"
+      phoneNo:
+        type: "integer"
+        format: "int64"
+        example: 9640112233
+      qualification:
+        type: "string"
+        example: "B.Tech"
+      createdOn:
+        type: "string"
+        format: "date-time"
+      createdBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      modifiedOn:
+        type: "string"
+        format: "date-time"
+      modifiedBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      isDeleted:
+        type: "integer"
+        format: "int64"
+        example: 0
+  forgotPassword_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "password changed Succesfully"
+      data:
+        $ref: "#/definitions/forgotPassword_response_200"
+  forgotPassword_response_200:
+    type: "array"
+    items: 
+      $ref: "#/definitions/forgotPasswordArray_response_200" 
+  forgotPasswordArray_response_200:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni"
+      password:
+        type: "string"
+        example: "Glyt0VDoXp"
+      city:
+        type: "string"
+        example: "Vijayawada"
+      state:
+        type: "string"
+        example: "AP"
+      County:
+        type: "string"
+        example: "India"
+      phoneNo:
+        type: "integer"
+        format: "int64"
+        example: 9640112233
+      qualification:
+        type: "string"
+        example: "B.Tech"
+      createdOn:
+        type: "string"
+        format: "date-time"
+      createdBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      modifiedOn:
+        type: "string"
+        format: "date-time"
+      modifiedBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      isDeleted:
+        type: "integer"
+        format: "int64"
+        example: 0
+  deleteUser_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "password changed Succesfully"
+      data:
+        $ref: "#/definitions/deleteUser_response_200"
+  deleteUser_response_200:
+    type: "array"
+    items: 
+      $ref: "#/definitions/deleteUserArray_response_200"
+  deleteUserArray_response_200:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni"
+      password:
+        type: "string"
+        example: "Glyt0VDoXp"
+      city:
+        type: "string"
+        example: "Vijayawada"
+      state:
+        type: "string"
+        example: "AP"
+      County:
+        type: "string"
+        example: "India"
+      phoneNo:
+        type: "integer"
+        format: "int64"
+        example: 9640112233
+      qualification:
+        type: "string"
+        example: "B.Tech"
+      createdOn:
+        type: "string"
+        format: "date-time"
+      createdBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      modifiedOn:
+        type: "string"
+        format: "date-time"
+      modifiedBy:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      isDeleted:
+        type: "integer"
+        format: "int64"
+        example: 1 
+  addQuestions_req:
+    type: "object"
+    properties:
+      technology:
+        type: "string"
+        example: "MongoDB"
+      technologyCode:
+        type: "string"
+        example: "DB1001"
+      questions:
+        type: "array"
+        items:
+          $ref: "#/definitions/addQuestions_questions_req"
+  addQuestions_questions_req:
+    type: "object"
+    properties:
+      qid: 
+        type: "integer"
+        format: "int64"
+        example: 1
+      question:
+        type: "string"
+        example: "Which of the following is a NoSQL Database Type ?"
+      options:
+        type: "string"
+        example: ["SQL","Document databases","JSON","All of the mentioned"]
+      answer:
+        type: "string"
+        example: "Document databases"
+  addQuestions_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "technology added successfully"
+  getQuestions_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: 200
+      technology:
+        type: "string"
+        example: "MongoDB"
+      technologyCode:
+        type: "string"
+        example: "DB1001"
+      questions:
+        type: "array"
+        items:
+          $ref: "#/definitions/getQuestions_questions_response"
+  getQuestions_questions_response:
+    type: "object"
+    properties:
+      qid: 
+        type: "integer"
+        format: "int64"
+        example: 1
+      question:
+        type: "string"
+        example: "Which of the following is a NoSQL Database Type ?"
+      option1:
+        type: "string"
+        example: "SQL"
+      option2:
+        type: "string"
+        example: "Document databases"
+      option3:
+        type: "string"
+        example: "JSON"
+      option4:
+        type: "string"
+        example: "All of the mentioned"
+  addTransaction_req:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      userName:
+        type: "string"
+        example: "Triveni"
+      technology:
+        type: "string"
+        example: "MongoDB"
+      technologyCode:
+        type: "string"
+        example: "DB1001"
+      questions:
+        type: "array"
+        items:
+          $ref: "#/definitions/addTransaction_questions_req"
+  addTransaction_questions_req:
+    type: "object"
+    properties:
+      qid: 
+        type: "integer"
+        format: "int64"
+        example: 1
+      answer:
+        type: "string"
+        example: "Document databases"
+          
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

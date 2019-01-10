@@ -10,8 +10,8 @@ var tokenGen = async (req, res, next) => {
     logger.info("Entered into token generation service");
     try {
         var token = await jwt.sign({
-            data: 'users'
-        }, "SECRET_KEY", { expiresIn: '300s' });
+           email : 'users'
+        }, "SECRET_KEY", { expiresIn: '1d' });
         res.status(HTTP_CODES.OK).send({
             "statusCode": HTTP_CODES.OK,
             "info": "token generated successfully",

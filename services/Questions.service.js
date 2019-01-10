@@ -35,7 +35,7 @@ var getAll = async (req,res,next)=>{
     console .log("URL hit to :", req.hostname, req.originalUrl);
     logger.info("Entered into questions adding service");
     try{
-        let technology = req.params.technology;
+        let technology = req.query.technologyCode;
         let min1 =8,max1 = 10, questions=[],questionNumbers=[],options= [];
         let numberOfQuestions = Math.floor(Math.random() * 3) + 8;
         console.log(numberOfQuestions)
@@ -73,15 +73,22 @@ var getAll = async (req,res,next)=>{
             question.o2 = data[0].questions[questionNumbers[qno]-1].options[options[1]-1];
             question.o3 = data[0].questions[questionNumbers[qno]-1].options[options[2]-1];
             question.o4 = data[0].questions[questionNumbers[qno]-1].options[options[3]-1];
+            question.answer=""
             questions.push(question);
             question ={}
         }
-        res.send(questions);
+        res.status(HTTP_CODES.OK).send({
+            "statusCode": HTTP_CODES.OK,
+            "technology": data[0].technology,
+            "technologyCode":data[0].technologyCode,
+            "questions":questions
+            })
     }
     else{
         res.status(HTTP_CODES.BAD_REQUEST).send({
             "statusCode": HTTP_CODES.BAD_REQUEST,
             "info": "select valid course"
+
             })
     }
 }

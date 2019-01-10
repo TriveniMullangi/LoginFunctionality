@@ -15,7 +15,7 @@ var userLogin = async (req, res, next) => {
         var data = await userLoginModel.Login.findAll(
             {
                 where: {
-                    email: req.params.email
+                    email: req.body.email
                 }
             }
             );
@@ -26,7 +26,7 @@ var userLogin = async (req, res, next) => {
 
             if(data[0].status === 'Active'){
             
-                if (data[0].password === req.params.password && data[0].loginAttempts < 5) {
+                if (data[0].password === req.body.password && data[0].loginAttempts < 5) {
                     var loginAttemptsUpdate = await userLoginModel.Login.update({ 
                         
                         "loginAttempts" : 0,
@@ -35,14 +35,14 @@ var userLogin = async (req, res, next) => {
                         }, 
                         {
                              where:{ 
-                                  email : req.params.email
+                                  email : req.body.email
                                     }
                                 })
                     
                     var afterData = await userLoginModel.Login.findAll(
                         {
                             where: {
-                                        email: req.params.email
+                                        email: req.body.email
                                     }
                         });
                         res.status(HTTP_CODES.OK).send({
@@ -61,7 +61,7 @@ var userLogin = async (req, res, next) => {
                     }, 
                     {
                          where:{ 
-                              email : req.params.email
+                              email : req.body.email
                                 }
                 }).then(()=>{
                     res.status(HTTP_CODES.BAD_REQUEST).send({
@@ -78,7 +78,7 @@ var userLogin = async (req, res, next) => {
                 //console.log("hii")
                 var updateLoginAttempts = userLoginModel.Login.update(
                     { "loginAttempts" : data[0].loginAttempts+1,},
-                    { where :{ email : req.params.email}}
+                    { where :{ email : req.body.email}}
                 )
 
                     res.status(HTTP_CODES.BAD_REQUEST).send({
@@ -94,13 +94,13 @@ var userLogin = async (req, res, next) => {
                 var data = await userLoginModel.Login.findAll(
                     {
                         where: {
-                            email: req.params.email
+                            email: req.body.email
                         }
                     });
                    
                     // var endDate = new Date();
                      //console.log(startDate < endDate)
-                if (data[0].password === req.params.password){
+                if (data[0].password === req.body.password){
                     var startDate = data[0].modifiedOn;
                     var DateDiff =moment().subtract(1, 'hours').toDate();
                     if( startDate < DateDiff){
@@ -112,7 +112,7 @@ var userLogin = async (req, res, next) => {
                         {
                             where : {
                                
-                                    email: req.params.email,
+                                    email: req.body.email,
                                     modifiedOn : {
                                         [Op.lte]: DateDiff
                                         }      
@@ -121,7 +121,7 @@ var userLogin = async (req, res, next) => {
                         var afterData = await userLoginModel.Login.findAll(
                             {
                                 where: {
-                                            email: req.params.email
+                                            email: req.body.email
                                         }
                             });
                             res.status(HTTP_CODES.OK).send({

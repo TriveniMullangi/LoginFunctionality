@@ -10,17 +10,17 @@ const forgotPasswordService = require('../services/forgotPassword.service');
 const changepasswordService = require('../services/changePassword.service');
 const deletePasswordService = require('../services/deleteUser.service');
 const QuestionsService = require('../services/Questions.service')
-
+const transactionsService = require('../services/resultvalidation.service');
 
 router.get('/tokenGen',adduserService.tokenGen);
 router.post('/addUser',expressJoi(loginSchema.userLoginSchema),adduserService.addUser);
-router.get('/userLogin/:email/:password',loginService.userLogin);
+router.post('/userLogin',loginService.userLogin);
 router.post('/forgotPassword',forgotPasswordService.forgotPassword)
 router.post('/changePassword',changepasswordService.changePassword)
 router.post('/deleteUser',deletePasswordService.deleteUser)
 router.post('/addQuestions',expressJoi(questionSchema.questionSchema), QuestionsService.addQuestions);
-router.get('/getQuestions/:technology', QuestionsService.getAll);
-
+router.get('/getQuestions', QuestionsService.getAll);
+router.post('/addTransaction',transactionsService.addTransaction)
 
 
 module.exports = router;
