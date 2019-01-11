@@ -1,6 +1,7 @@
 var logger = require('../util/logger');
 var HTTP_CODES = require('../util/statusCodes');
 var questionsModel = require('../model/questions.model');
+const nodeMailer = require('nodemailer');
 var transactionsModel = require('../model/transactions.model')
 
 var addTransaction = async (req, res, next) => {
@@ -54,6 +55,36 @@ var addTransaction = async (req, res, next) => {
                 marksSecured : marks,
                 status : status
             })
+            var transporter = nodeMailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                        user: 'thd.project2.0@gmail.com',
+                        pass: 'thdproject@2.0'
+                    },
+                tls: {
+                        rejectUnauthorized: false
+                    }
+            });
+                
+                
+            var mailOptions = {
+                
+                to: payLoad.email,
+                subject: 'certification result ',
+                from: '"THD Project" <thd.project2.0@gmail.com>',
+                html: '<h1> Your marks for  <u>' + payLoad.technology + '</u>  are : '  + marks + '</h1><b> <p> your status is: '+ status+ ' </p></b>'
+            };
+                
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    logger.error(error);
+                }
+                else {
+                        console.log(info);
+                }
+            });
             res.status(HTTP_CODES.OK).send({
                 "statusCode": HTTP_CODES.OK,
                 "info": "transaction added successfully",

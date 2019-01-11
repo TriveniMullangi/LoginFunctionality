@@ -13,14 +13,14 @@ const QuestionsService = require('../services/Questions.service')
 const transactionsService = require('../services/resultvalidation.service');
 
 router.get('/tokenGen',adduserService.tokenGen);
-router.post('/addUser',expressJoi(loginSchema.userLoginSchema),adduserService.addUser);
-router.post('/userLogin',loginService.userLogin);
-router.post('/forgotPassword',forgotPasswordService.forgotPassword)
-router.post('/changePassword',changepasswordService.changePassword)
-router.post('/deleteUser',deletePasswordService.deleteUser)
-router.post('/addQuestions',expressJoi(questionSchema.questionSchema), QuestionsService.addQuestions);
-router.get('/getQuestions', QuestionsService.getAll);
-router.post('/addTransaction',transactionsService.addTransaction)
+router.post('/addUser',verifyToken,expressJoi(loginSchema.userLoginSchema),adduserService.addUser);
+router.post('/userLogin',verifyToken,loginService.userLogin);
+router.post('/forgotPassword',verifyToken,forgotPasswordService.forgotPassword)
+router.post('/changePassword',verifyToken,changepasswordService.changePassword)
+router.post('/deleteUser',verifyToken,deletePasswordService.deleteUser)
+router.post('/addQuestions',verifyToken,expressJoi(questionSchema.questionSchema), QuestionsService.addQuestions);
+router.get('/getQuestions', verifyToken,QuestionsService.getAll);
+router.post('/addTransaction',verifyToken,transactionsService.addTransaction)
 
 
 module.exports = router;

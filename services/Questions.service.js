@@ -13,12 +13,12 @@ var addQuestions =  async (req,res,next)=>{
         if(payLoad != undefined)
         {
             var data = await questionsModel.Questions.create(payLoad)
-            .then(()=>{
                 res.status(HTTP_CODES.OK).send({
                 "statusCode": HTTP_CODES.OK,
-                "info": "course added successfully"
+                "info": "course added successfully",
+                "data" : data
                 })
-            })
+           
             .catch(err=>{
                 console.log(err);
             })

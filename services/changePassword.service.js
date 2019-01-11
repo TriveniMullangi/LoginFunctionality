@@ -1,11 +1,8 @@
 var logger = require('../util/logger');
-//var generator = require('random-password');
 const nodeMailer = require('nodemailer');
 var HTTP_CODES = require('../util/statusCodes');
 var userLoginModel = require('../model/login.model');
 var moment = require("moment");
-// const sequelize = require('sequelize');
-// const Op = sequelize.Op;
 
 var changePassword =async (req, res, next) => {
     console.log("URL hit to :", req.hostname, req.originalUrl);

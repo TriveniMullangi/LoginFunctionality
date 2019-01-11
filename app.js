@@ -42,7 +42,7 @@ app.use('/users', usersRouter);
 
 app.use(function(req, res, next) {
   var err=new Error('Not Found');
-  err.status=400;
+  err.status=404;
   err.info="Route not Found";
   next(err);
 });
@@ -78,15 +78,27 @@ app.use((err,req,res,next)=>{
       res.status(500).send(errorMessage);
     }
     else if(err.name == "SequelizeUniqueConstraintError"){
-      console.log("hi")
-      console.log("user already available")
+      //console.log("hi")
+      console.log("primary key violation")
       var errorMessage = {
         "status": 400,
-        "info": "primary key constraint",
+        "info": "primary key constraint violation",
         "error":err.parent.sqlMessage
       };
       res.status(400).send(errorMessage);
     }
+
+    else if(err.name == "SequelizeForeignKeyConstraintError"){
+      //console.log("hi")
+      console.log("Foreign Key Constraint violation")
+      var errorMessage = {
+        "status": 400,
+        "info": "Foreign key constraint violation",
+       
+      };
+      res.status(400).send(errorMessage);
+    }
+
     //404 Error
     else if (err.statusCode == 404) {
       var errorMessage = {

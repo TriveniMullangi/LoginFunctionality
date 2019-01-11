@@ -4,14 +4,14 @@ var logger = require('../util/logger');
 var HTTP_CODES = require('../util/statusCodes');
 var userLoginModel = require('../model/login.model');
 const jwt = require('jsonwebtoken');
-
+ 
 var tokenGen = async (req, res, next) => {
     console.log("URL hit to :", req.hostname, req.originalUrl);
     logger.info("Entered into token generation service");
     try {
         var token = await jwt.sign({
            email : 'users'
-        }, "SECRET_KEY", { expiresIn: '1d' });
+        }, "SECRET_KEY", { expiresIn: '1h' });
         res.status(HTTP_CODES.OK).send({
             "statusCode": HTTP_CODES.OK,
             "info": "token generated successfully",

@@ -11,7 +11,7 @@ tags:
 - name: "certification"
   description: "Add course, get particular course question and answers randomly "
 - name: "transactions"
-  description: "Operations about user"
+  description: "add record about user's certification result"
 schemes:
 - "https"
 - "http"
@@ -51,6 +51,10 @@ paths:
       - "application/json"
       
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: "new user added to the database"
@@ -63,9 +67,13 @@ paths:
           schema: 
             $ref: "#/definitions/addUser_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request" 
+          schema: 
+            $ref: "#/definitions/addUser_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/addUser_response_404"
         500:
           description: "Internal server error" 
       security:
@@ -86,6 +94,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: "user has to give valid email and password to login to the application"
@@ -120,6 +132,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - name: "email"
         in: "query"
         description: "changing password based on email"
@@ -150,6 +166,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - name: "email"
         in: "query"
         description: "generating password based on email"
@@ -180,6 +200,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - name: "email"
         in: "query"
         description: "deleting user based on email"
@@ -210,6 +234,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - name: "body"
         in: "body"
         description: "adding questions for a technology based on technology code"
@@ -241,6 +269,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - name: "technologyCode"
         in: "query"
         description: "getting questions of a technology based on technology code"
@@ -271,6 +303,10 @@ paths:
       
       - "application/json"
       parameters:
+      - name: "token"
+        in: "header"
+        required: true
+        type: "string"
       - name: "body"
         in: "body"
         description: "storing user result in database"
@@ -282,7 +318,7 @@ paths:
         200:
           description: "questions for a technology added successfully"
           schema:
-            $ref: "#/definitions/addQuestions_response"
+            $ref: "#/definitions/addTransaction_response"
         400:
           description: "Bad Request"    
         404:
@@ -399,6 +435,30 @@ definitions:
         type: "integer"
         format: "int64"
         example: 0
+  addUser_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "primary key constraint"
+      error:
+        type: "string"
+        example: "Duplicate entry 'mullangitriveni4@gmail.com' for key 'PRIMARY'"
+  addUser_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "Route not found"
+    
   userLogin_req:
     type: "object"
     properties:
@@ -757,7 +817,45 @@ definitions:
       answer:
         type: "string"
         example: "Document databases"
-          
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+  addTransaction_response:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "200"
+      Info:
+        type: "string"
+        example: "technology addedtransaction added successfully"
+      data:
+        $ref: "#/definitions/addTransaction_response_200"
+  addTransaction_response_200:
+    type: "object"
+    properties:
+      Id:
+        type: "integer"
+        format: "int64"
+        example: 1
+      userName:
+        type: "string"
+        example: "Triveni"
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
+      technology:
+        type: "string"
+        example: "MongoDB"
+      technologyCode:
+        type: "string"
+        example: "DB1001"
+      totalQuestions:
+        type: "integer"
+        format: "int64"
+        example: 8
+      marksSecured:
+        type: "integer"
+        format: "int64"
+        example: 5
+      status:
+        type: "string"
+        example: "Disqualified"

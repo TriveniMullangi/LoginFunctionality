@@ -67,7 +67,7 @@ var userLogin = async (req, res, next) => {
                     res.status(HTTP_CODES.BAD_REQUEST).send({
                         "statusCode": HTTP_CODES.BAD_REQUEST,
                         "info": "your account is blocked please try agin after a while",
-                        "updateStatus" : data
+                        //"updateStatus" : data
                     })
                 })
                 .catch(err=>{
