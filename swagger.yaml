@@ -13,8 +13,8 @@ tags:
 - name: "transactions"
   description: "add record about user's certification result"
 schemes:
-- "https"
 - "http"
+
 paths:
   /tokenGen:
     get:
@@ -76,10 +76,6 @@ paths:
             $ref: "#/definitions/addUser_response_404"
         500:
           description: "Internal server error" 
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
   /userLogin:
     post:
       tags:
@@ -110,15 +106,16 @@ paths:
           schema: 
             $ref: "#/definitions/userLogin_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/userLogin_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/userLogin_response_404"
         500:
           description: "Internal server error" 
-      security:
-      - petstore_auth:
-        - "write:pets"
-        - "read:pets"
+      
   /changePassword:
     post:
       tags:
@@ -132,6 +129,11 @@ paths:
       
       - "application/json"
       parameters:
+      - in: "body"
+        name: "password"
+        required: true
+        schema:
+          $ref: "#/definitions/changePassword_req"
       - name: "token"
         in: "header"
         required: true
@@ -148,9 +150,13 @@ paths:
           schema:
             $ref: "#/definitions/changePassword_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/changePassword_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/changePassword_response_404"
         500:
           description: "Internal server error" 
   /forgotPassword:
@@ -170,11 +176,12 @@ paths:
         in: "header"
         required: true
         type: "string"
-      - name: "email"
-        in: "query"
-        description: "generating password based on email"
+      - in: "body"
+        name: "body"
+        description: "new user added to the database"
         required: true
-        type: "string"
+        schema:
+          $ref: "#/definitions/forgotPassword_req"
       
       responses:
         200:
@@ -182,9 +189,13 @@ paths:
           schema:
             $ref: "#/definitions/forgotPassword_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/forgotPassword_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/forgotPassword_response_404"
         500:
           description: "Internal server error" 
   /deleteUser:
@@ -216,9 +227,13 @@ paths:
           schema:
             $ref: "#/definitions/deleteUser_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/deleteUser_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/deleteUser_response_404"
         500:
           description: "Internal server error" 
   /addQuestions:
@@ -251,9 +266,13 @@ paths:
           schema:
             $ref: "#/definitions/addQuestions_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/addQuestions_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/addQuestions_response_404"
         500:
           description: "Internal server error" 
   /getQuestions:
@@ -285,9 +304,13 @@ paths:
           schema:
             $ref: "#/definitions/getQuestions_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/getQuestions_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/getQuestions_response_404"
         500:
           description: "Internal server error"
   /addTransaction:
@@ -320,24 +343,16 @@ paths:
           schema:
             $ref: "#/definitions/addTransaction_response"
         400:
-          description: "Bad Request"    
+          description: "Bad Request"  
+          schema: 
+            $ref: "#/definitions/addTransaction_response_400"
         404:
           description: "Not Found"
+          schema: 
+            $ref: "#/definitions/addTransaction_response_404"
         500:
           description: "Internal server error"
-
-securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
+          
 definitions:
   tokenGen_response:
     type: "object"
@@ -530,6 +545,33 @@ definitions:
         type: "integer"
         format: "int64"
         example: 0
+  userLogin_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "invalid credentials"
+  userLogin_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
+    
+  changePassword_req:
+    type: "object"
+    properties:
+      password: 
+        type: "string"
+        example: "triveni@123"
   changePassword_response:
     type: "object"
     properties:
@@ -590,6 +632,32 @@ definitions:
         type: "integer"
         format: "int64"
         example: 0
+  changePassword_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "enter valid email"
+  changePassword_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
+  forgotPassword_req:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        example: "tmullangi@miraclesoft.com"
   forgotPassword_response:
     type: "object"
     properties:
@@ -650,6 +718,26 @@ definitions:
         type: "integer"
         format: "int64"
         example: 0
+  forgotPassword_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "enter valid email"
+  forgotPassword_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
   deleteUser_response:
     type: "object"
     properties:
@@ -710,6 +798,26 @@ definitions:
         type: "integer"
         format: "int64"
         example: 1 
+  deleteUser_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "enter valid email"
+  deleteUser_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
   addQuestions_req:
     type: "object"
     properties:
@@ -749,6 +857,29 @@ definitions:
       Info:
         type: "string"
         example: "technology added successfully"
+  addQuestions_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "primary key constraint violation"
+      error: 
+        type: "string"
+        example: "Duplicate entry 'DB1001' for key 'PRIMARY'"
+  addQuestions_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
   getQuestions_response:
     type: "object"
     properties:
@@ -788,6 +919,26 @@ definitions:
       option4:
         type: "string"
         example: "All of the mentioned"
+  getQuestions_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "select valid technology"
+  getQuestions_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
   addTransaction_req:
     type: "object"
     properties:
@@ -859,3 +1010,24 @@ definitions:
       status:
         type: "string"
         example: "Disqualified"
+  addTransaction_response_400:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "400"
+      Info:
+        type: "string"
+        example: "Foreign key constraint violation"  
+  addTransaction_response_404:
+    type: "object"
+    properties:
+      Status:
+        type: "integer"
+        format: "int64"
+        example: "404"
+      Info:
+        type: "string"
+        example: "route not found"
+  

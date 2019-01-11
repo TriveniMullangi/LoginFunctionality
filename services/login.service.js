@@ -81,8 +81,8 @@ var userLogin = async (req, res, next) => {
                     { where :{ email : req.body.email}}
                 )
 
-                    res.status(HTTP_CODES.BAD_REQUEST).send({
-                        "statusCode": HTTP_CODES.BAD_REQUEST,
+                    res.status(HTTP_CODES.NOT_FOUND).send({
+                        "statusCode": HTTP_CODES.NOT_FOUND,
                         "info": "invalid credentials",
                         //"updateLoginAttempts" : updateLoginAttempts
                     })
