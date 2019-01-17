@@ -5,7 +5,7 @@ var HTTP_CODES = require('../util/statusCodes');
 var userLoginModel = require('../model/login.model');
 const jwt = require('jsonwebtoken');
  
-var tokenGen = async (req, res, next) => {
+var tokenGen = async function(req, res, next)  {
     console.log("URL hit to :", req.hostname, req.originalUrl);
     logger.info("Entered into token generation service");
     try {
